@@ -16,7 +16,11 @@ import {
   Check,
   X,
   ChevronDown,
-  HelpCircle
+  HelpCircle,
+  Search,
+  Smile,
+  Puzzle,
+  Lightbulb
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -27,13 +31,20 @@ const Navbar = () => {
     <nav className="fixed top-0 w-full z-50 border-b border-slate-border bg-slate-dark/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-accent-orange font-mono text-2xl font-bold tracking-tighter">//</span>
-            <span className="font-bold text-xl tracking-tight text-text-primary">Brand Name It</span>
+          <div className="flex items-center gap-8">
+            <a href="https://domains.brandnameit.com/site/home" className="flex items-center gap-2">
+              <span className="text-accent-orange font-mono text-2xl font-bold tracking-tighter">//</span>
+              <span className="font-bold text-xl tracking-tight text-text-primary">Brand Name It</span>
+            </a>
+            
+            <div className="hidden md:flex items-center gap-6">
+              <a href="https://domains.brandnameit.com/site/pricing" className="text-sm font-medium text-text-muted hover:text-text-primary transition-colors">Pricing</a>
+            </div>
           </div>
           
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a href="/login" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Login</a>
+            <a href="https://domains.brandnameit.com/login" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Log in</a>
+            <a href="https://domains.brandnameit.com/cart" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Cart</a>
           </div>
 
           <div className="md:hidden">
@@ -46,7 +57,9 @@ const Navbar = () => {
 
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-slate-card border-b border-slate-border p-4 space-y-4 shadow-xl">
-          <a href="/login" className="block text-text-primary font-semibold py-2">Login</a>
+          <a href="https://domains.brandnameit.com/site/pricing" className="block text-text-muted font-medium py-2">Pricing</a>
+          <a href="https://domains.brandnameit.com/login" className="block text-text-primary font-semibold py-2">Log in</a>
+          <a href="https://domains.brandnameit.com/cart" className="block text-text-primary font-semibold py-2">Cart</a>
         </div>
       )}
     </nav>
@@ -59,7 +72,7 @@ export default function App() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (domain.trim()) {
-      window.location.href = `https://domains.brandnameit.com/domain/search?domain=${encodeURIComponent(domain.trim())}`;
+      window.location.href = `https://domains.brandnameit.com/site/search?query=${encodeURIComponent(domain.trim())}`;
     }
   };
 
@@ -68,71 +81,95 @@ export default function App() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-40 pb-32 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-text-primary max-w-4xl mx-auto leading-[1.1]">
-              Your next big idea <span className="text-accent-orange">starts here.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-12 leading-relaxed">
-              Find the perfect domain name. No hidden fees, no upselling nonsense. Just sleek, modern domain management.
-            </p>
+      <section className="pt-32 pb-24 px-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+          <div className="flex-1 text-left">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-text-primary leading-[1.1]">
+                Name it. Claim it. <span className="text-accent-orange">Launch it.</span>
+              </h1>
+              <p className="text-xl text-text-muted mb-12 leading-relaxed max-w-xl">
+                The right name can help people easily find you online. Find a memorable domain for your business today.
+              </p>
 
-            <form onSubmit={handleSearch} className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-3 p-2 bg-slate-card rounded-2xl border border-slate-border shadow-2xl shadow-black/20">
-              <input
-                type="text"
-                value={domain}
-                onChange={(e) => setDomain(e.target.value)}
-                placeholder="Find your perfect domain..."
-                className="flex-1 px-6 py-4 bg-transparent text-text-primary text-lg focus:outline-none placeholder:text-text-muted"
+              <form onSubmit={handleSearch} className="max-w-xl flex flex-col sm:flex-row gap-3 p-2 bg-slate-card rounded-2xl border border-slate-border shadow-2xl shadow-black/20 mb-6">
+                <input
+                  type="text"
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value)}
+                  placeholder="Enter a domain name or keywords"
+                  className="flex-1 px-6 py-4 bg-transparent text-text-primary text-lg focus:outline-none placeholder:text-text-muted"
+                />
+                <button 
+                  type="submit"
+                  className="bg-accent-orange hover:bg-opacity-90 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-accent-orange/20 flex items-center justify-center"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+              </form>
+              
+              <p className="text-text-muted">
+                Already have a domain? <a href="https://domains.brandnameit.com/transfer" className="text-accent-orange hover:underline">Transfer it now.</a>
+              </p>
+            </motion.div>
+          </div>
+
+          <motion.div 
+            className="flex-1 hidden lg:block"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="relative aspect-square w-full max-w-lg mx-auto">
+              <div className="absolute inset-0 bg-accent-orange/10 blur-[100px] rounded-full" />
+              <img 
+                src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2670&auto=format&fit=crop" 
+                alt="Digital Assets" 
+                className="relative z-10 w-full h-full object-contain mix-blend-lighten drop-shadow-[0_0_50px_rgba(255,102,0,0.3)]"
+                referrerPolicy="no-referrer"
               />
-              <button 
-                type="submit"
-                className="bg-accent-orange hover:bg-opacity-90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-accent-orange/20"
-              >
-                Search
-              </button>
-            </form>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 px-4 border-t border-slate-border">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-text-primary">
-            Domain management that doesn't feel like a trap.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-slate-card border border-slate-border hover:border-accent-orange/30 transition-all">
-              <div className="w-12 h-12 flex items-center justify-center mb-6">
-                <DollarSign className="text-accent-orange w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-text-primary">Transparent Pricing</h3>
-              <p className="text-text-muted leading-relaxed">
-                No bait-and-switch renewal fees. You pay exactly what you see today, next year, and the year after that.
+      {/* Feature Highlights (Matches screenshot sub-hero) */}
+      <section className="pb-24 px-4">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="flex items-start gap-4">
+            <div className="bg-accent-orange/10 p-3 rounded-lg text-accent-orange">
+              <Smile className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-text-primary font-bold mb-2">Find the right fit</h3>
+              <p className="text-text-muted text-sm leading-relaxed">
+                Find the perfect domain in seconds using our search tool.
               </p>
             </div>
-            <div className="p-8 rounded-2xl bg-slate-card border border-slate-border hover:border-accent-orange/30 transition-all">
-              <div className="w-12 h-12 flex items-center justify-center mb-6">
-                <Layout className="text-accent-orange w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-text-primary">Sleek Dark Dashboard</h3>
-              <p className="text-text-muted leading-relaxed">
-                Manage DNS records, forwarding, and nameservers without navigating through 1990s clutter or intrusive pop-ups.
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="bg-accent-orange/10 p-3 rounded-lg text-accent-orange">
+              <Puzzle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-text-primary font-bold mb-2">Simple to manage</h3>
+              <p className="text-text-muted text-sm leading-relaxed">
+                Our easy to use system helps you manage your domain without the confusion.
               </p>
             </div>
-            <div className="p-8 rounded-2xl bg-slate-card border border-slate-border hover:border-accent-orange/30 transition-all">
-              <div className="w-12 h-12 flex items-center justify-center mb-6">
-                <Shield className="text-accent-orange w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-text-primary">One-Click Privacy</h3>
-              <p className="text-text-muted leading-relaxed">
-                Keep your personal WHOIS data secure and out of the hands of spammers with simple, straightforward privacy protection.
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="bg-accent-orange/10 p-3 rounded-lg text-accent-orange">
+              <Lightbulb className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-text-primary font-bold mb-2">Options for any idea</h3>
+              <p className="text-text-muted text-sm leading-relaxed">
+                Explore a variety of domain extensions that suit any business idea.
               </p>
             </div>
           </div>
