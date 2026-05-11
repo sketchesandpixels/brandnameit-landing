@@ -5,6 +5,13 @@
 
 import { motion } from "motion/react";
 import { 
+  BrowserRouter as Router, 
+  Routes, 
+  Route, 
+  Link,
+  useNavigate
+} from "react-router-dom";
+import { 
   Menu, 
   DollarSign,
   Layout,
@@ -20,35 +27,57 @@ import {
   Search,
   Smile,
   Puzzle,
-  Lightbulb
+  Lightbulb,
+  Home as HomeIcon,
+  ShoppingBag,
+  ArrowLeft
 } from "lucide-react";
 import React, { useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import { guides } from "./guides";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="fixed top-0 w-full z-50 border-b border-slate-border bg-slate-dark/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-8">
-            <a href="https://domains.brandnameit.com/site/home" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <span className="text-accent-orange font-mono text-2xl font-bold tracking-tighter">//</span>
               <span className="font-bold text-xl tracking-tight text-text-primary">Brand Name It</span>
-            </a>
+            </Link>
             
             <div className="hidden md:flex items-center gap-6">
-              <a href="https://domains.brandnameit.com/site/pricing" className="text-sm font-medium text-text-muted hover:text-text-primary transition-colors">Pricing</a>
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('pricing');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  else navigate('/?scroll=pricing');
+                }}
+                className="text-sm font-medium text-text-muted hover:text-text-primary transition-colors"
+              >
+                Pricing
+              </button>
             </div>
           </div>
           
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a href="https://domains.brandnameit.com/login" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Log in</a>
-            <a href="https://domains.brandnameit.com/cart" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Cart</a>
+            <a href="https://domains.brandnameit.com/site/login" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Log in</a>
+            <a href="https://domains.brandnameit.com/site/cart" className="text-text-primary hover:text-accent-orange transition-colors font-semibold">Cart</a>
+            <a 
+              href="https://domains.brandnameit.com/site/register" 
+              className="bg-accent-orange hover:bg-opacity-90 text-white px-5 py-2 rounded-lg font-bold transition-all shadow-lg shadow-accent-orange/10"
+            >
+              Sign up
+            </a>
           </div>
 
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-text-muted p-2">
+          <div className="md:hidden text-text-muted">
+            <button onClick={() => setIsOpen(!isOpen)} className="p-2">
               <Menu />
             </button>
           </div>
@@ -56,18 +85,274 @@ const Navbar = () => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-slate-card border-b border-slate-border p-4 space-y-4 shadow-xl">
-          <a href="https://domains.brandnameit.com/site/pricing" className="block text-text-muted font-medium py-2">Pricing</a>
-          <a href="https://domains.brandnameit.com/login" className="block text-text-primary font-semibold py-2">Log in</a>
-          <a href="https://domains.brandnameit.com/cart" className="block text-text-primary font-semibold py-2">Cart</a>
+        <div className="md:hidden absolute top-16 left-0 w-full bg-slate-card border-b border-slate-border p-4 space-y-4 shadow-xl flex flex-col">
+          <button 
+            onClick={() => {
+              setIsOpen(false);
+              const el = document.getElementById('pricing');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else navigate('/?scroll=pricing');
+            }}
+            className="block text-left text-text-muted font-medium py-2"
+          >
+            Pricing
+          </button>
+          <a href="https://domains.brandnameit.com/site/login" className="block text-text-primary font-semibold py-2">Log in</a>
+          <a href="https://domains.brandnameit.com/site/cart" className="block text-text-primary font-semibold py-2">Cart</a>
+          <a 
+            href="https://domains.brandnameit.com/site/register" 
+            className="w-full text-center bg-accent-orange hover:bg-opacity-90 text-white px-5 py-3 rounded-lg font-bold transition-all"
+          >
+            Sign up
+          </a>
         </div>
       )}
     </nav>
   );
 };
 
-export default function App() {
+const NotFound = () => {
+  return (
+    <div className="min-h-screen bg-slate-dark flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8"
+          >
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-accent-orange/10 mb-6">
+              <X className="w-12 h-12 text-accent-orange" />
+            </div>
+            <h1 className="text-6xl font-bold text-text-primary mb-4">404</h1>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">Oops! Page not found</h2>
+            <p className="text-text-muted max-w-md mx-auto mb-8">
+              The page you're looking for doesn't exist or has been moved to a new address. 
+              Let's get you back on track.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                to="/" 
+                className="bg-accent-orange hover:bg-shadow-lg text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+              >
+                <HomeIcon className="w-5 h-5" />
+                Go to Landing
+              </Link>
+              <a 
+                href="https://domains.brandnameit.com/" 
+                className="bg-slate-card border border-slate-border text-text-primary px-8 py-3 rounded-xl font-bold transition-all hover:bg-slate-border flex items-center justify-center gap-2"
+              >
+                <ShoppingBag className="w-5 h-5 text-accent-orange" />
+                Back to Platform
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const GuideDetail = () => {
+  const { slug } = useParams();
+  const guide = guides.find(g => g.slug === slug);
+
+  if (!guide) {
+    return <NotFound />;
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-dark text-text-primary">
+      <Navbar />
+      <div className="pt-32 pb-20 px-4">
+        <div className="max-w-3xl mx-auto">
+          <Link to="/" className="inline-flex items-center gap-2 text-text-muted hover:text-accent-orange transition-colors mb-8 group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+            Back to Home
+          </Link>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-accent-orange/10 p-2 rounded-lg text-accent-orange">
+                <guide.icon className="w-5 h-5" />
+              </div>
+              <span className="text-xs font-bold text-accent-orange uppercase tracking-widest">{guide.category}</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-8 leading-tight">
+              {guide.title}
+            </h1>
+
+            <div className="prose prose-invert prose-orange max-w-none">
+              <div className="markdown-body text-text-muted leading-relaxed">
+                <ReactMarkdown>{guide.content}</ReactMarkdown>
+              </div>
+            </div>
+            
+            <div className="mt-16 p-8 bg-slate-card rounded-2xl border border-slate-border">
+              <h3 className="text-xl font-bold mb-4">Was this guide helpful?</h3>
+              <div className="flex gap-4">
+                <button className="px-6 py-2 bg-slate-border rounded-lg hover:bg-accent-orange hover:text-white transition-all font-bold">Yes</button>
+                <button className="px-6 py-2 bg-slate-border rounded-lg hover:bg-slate-dark transition-all font-bold">No</button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+const GuideList = () => {
+  return (
+    <div className="min-h-screen bg-slate-dark text-text-primary">
+      <Navbar />
+      <div className="pt-32 pb-20 px-4">
+        <div className="max-w-7xl mx-auto text-center mb-16">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6">Guides & Articles</h1>
+          <p className="text-text-muted max-w-2xl mx-auto text-lg">
+            Everything you need to know about managing your digital assets.
+          </p>
+        </div>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {guides.map((guide) => (
+              <Link key={guide.slug} to={`/guides/${guide.slug}`} className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block">
+                <div className="h-48 bg-slate-dark flex items-center justify-center border-b border-slate-border group-hover:bg-slate-dark/50 transition-colors">
+                  <guide.icon className="w-16 h-16 text-accent-orange opacity-20 group-hover:opacity-40 transition-opacity" />
+                </div>
+                <div className="p-8">
+                  <span className="text-xs font-bold text-accent-orange uppercase tracking-widest block mb-4">{guide.category}</span>
+                  <h3 className="text-xl font-bold mb-4 group-hover:text-accent-orange transition-colors">
+                    {guide.title}
+                  </h3>
+                  <p className="text-text-muted text-sm leading-relaxed mb-6">
+                    {guide.description}
+                  </p>
+                  <div className="flex items-center gap-2 font-bold text-sm">
+                    Read Article <ArrowUpRight className="w-4 h-4 text-accent-orange" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+const Footer = () => {
+  const navigate = useNavigate();
+  return (
+    <footer className="py-12 bg-slate-dark border-t border-slate-border">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="col-span-1">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-accent-orange font-mono text-xl font-bold tracking-tighter">//</span>
+            <span className="font-bold tracking-tight text-text-primary uppercase">Brand Name It</span>
+          </div>
+          <p className="text-text-muted text-sm leading-relaxed">
+            The modern registrar for professional brands. No hidden fees, no dark patterns, just great domains.
+          </p>
+        </div>
+
+        <div>
+          <h4 className="text-text-primary font-bold mb-6">Product</h4>
+          <ul className="space-y-4 text-sm font-medium">
+            <li><Link to="/" className="text-text-muted hover:text-accent-orange transition-colors">Domain Search</Link></li>
+            <li><a href="https://domains.brandnameit.com/site/transfer" className="text-text-muted hover:text-accent-orange transition-colors">Transfer Domain</a></li>
+            <li>
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('pricing');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  else navigate('/?scroll=pricing');
+                }}
+                className="text-text-muted hover:text-accent-orange transition-colors"
+              >
+                Full Pricing List
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-text-primary font-bold mb-6">Resources</h4>
+          <ul className="space-y-4 text-sm font-medium">
+            <li><Link to="/guides" className="text-text-muted hover:text-accent-orange transition-colors">Guides & Articles</Link></li>
+            <li><a href="https://domains.brandnameit.com/site/kb" className="text-text-muted hover:text-accent-orange transition-colors">Help Center / KB</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-text-primary font-bold mb-6">Legal</h4>
+          <ul className="space-y-4 text-sm font-medium">
+            <li><a href="https://domains.brandnameit.com/site/privacy" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-accent-orange transition-colors">Privacy Policy</a></li>
+            <li><a href="https://domains.brandnameit.com/site/terms" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-accent-orange transition-colors">Terms of Service</a></li>
+            <li><a href="https://domains.brandnameit.com/site/abuse" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-accent-orange transition-colors">Report Abuse</a></li>
+            <li><a href="http://www.icann.org/en/resources/registrants/registrant-rights-responsibilities" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-accent-orange transition-colors">ICANN Rights & Responsibilities</a></li>
+          </ul>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-slate-border flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
+        <p className="text-text-muted text-xs">&copy; {new Date().getFullYear()} Brand Name It. All rights reserved.</p>
+        <div className="flex gap-6 text-xs font-bold text-accent-orange uppercase tracking-widest">
+          <span>Security Guaranteed</span>
+          <span>Global Network</span>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+const FAQItem = ({ q, a }: { q: string, a: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="bg-slate-card border border-slate-border rounded-xl overflow-hidden">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left p-6 flex items-center justify-between group hover:bg-slate-border/10 transition-colors"
+      >
+        <span className="text-lg font-bold text-text-primary group-hover:text-accent-orange transition-colors">{q}</span>
+        <ChevronDown className={`w-5 h-5 text-accent-orange transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ 
+          height: isOpen ? "auto" : 0,
+          opacity: isOpen ? 1 : 0
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="overflow-hidden"
+      >
+        <div className="px-6 pb-6 text-text-muted leading-relaxed border-t border-slate-border/30 pt-4 mx-6">
+          {a}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+const Landing = () => {
   const [domain, setDomain] = useState("");
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  React.useEffect(() => {
+    const scroll = searchParams.get('scroll');
+    if (scroll === 'pricing') {
+      const el = document.getElementById('pricing');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [searchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,7 +398,7 @@ export default function App() {
               </form>
               
               <p className="text-text-muted">
-                Already have a domain? <a href="https://domains.brandnameit.com/transfer" className="text-accent-orange hover:underline">Transfer it now.</a>
+                Already have a domain? <a href="https://domains.brandnameit.com/site/transfer" className="text-accent-orange hover:underline">Transfer it now.</a>
               </p>
             </motion.div>
           </div>
@@ -127,9 +412,9 @@ export default function App() {
             <div className="relative aspect-square w-full max-w-lg mx-auto">
               <div className="absolute inset-0 bg-accent-orange/10 blur-[100px] rounded-full" />
               <img 
-                src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2670&auto=format&fit=crop" 
-                alt="Digital Assets" 
-                className="relative z-10 w-full h-full object-contain mix-blend-lighten drop-shadow-[0_0_50px_rgba(255,102,0,0.3)]"
+                src="https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=2670&auto=format&fit=crop" 
+                alt="3D Abstract Tech Asset" 
+                className="relative z-10 w-full h-full object-contain mix-blend-screen drop-shadow-[0_0_50px_rgba(255,102,0,0.4)]"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -189,7 +474,7 @@ export default function App() {
           </div>
           <div>
             <a 
-              href="https://domains.brandnameit.com/transfer"
+              href="https://domains.brandnameit.com/site/transfer"
               className="inline-block px-10 py-4 border-2 border-accent-orange text-accent-orange font-bold text-xl rounded-xl transition-all hover:bg-accent-orange hover:text-white"
             >
               Transfer a Domain
@@ -199,7 +484,7 @@ export default function App() {
       </section>
 
       {/* Featured Guides Section */}
-      <section className="py-24 px-4">
+      <section id="guides" className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-xl">
@@ -208,13 +493,13 @@ export default function App() {
                 Learn how to secure your digital assets and navigate the domain landscape with our expert-crafted articles.
               </p>
             </div>
-            <a href="https://domains.brandnameit.com/guides" className="flex items-center gap-2 text-accent-orange font-bold hover:gap-3 transition-all">
+            <Link to="/guides" className="flex items-center gap-2 text-accent-orange font-bold hover:gap-3 transition-all">
               View all articles <ChevronRight className="w-5 h-5" />
-            </a>
+            </Link>
           </div>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <a href="https://domains.brandnameit.com/guides/choosing-your-domain" className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block text-left">
+            <Link to="/guides/choosing-your-domain" className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block text-left">
               <div className="h-48 bg-slate-dark flex items-center justify-center border-b border-slate-border group-hover:bg-slate-dark/50 transition-colors">
                 <BookOpen className="w-16 h-16 text-accent-orange opacity-20 group-hover:opacity-40 transition-opacity" />
               </div>
@@ -230,9 +515,9 @@ export default function App() {
                   Read Article <ArrowUpRight className="w-4 h-4 text-accent-orange" />
                 </div>
               </div>
-            </a>
+            </Link>
 
-            <a href="https://domains.brandnameit.com/guides/security-deep-dive" className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block text-left">
+            <Link to="/guides/security-deep-dive" className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block text-left">
               <div className="h-48 bg-slate-dark flex items-center justify-center border-b border-slate-border group-hover:bg-slate-dark/50 transition-colors">
                 <Shield className="w-16 h-16 text-accent-orange opacity-20 group-hover:opacity-40 transition-opacity" />
               </div>
@@ -248,9 +533,9 @@ export default function App() {
                   Read Article <ArrowUpRight className="w-4 h-4 text-accent-orange" />
                 </div>
               </div>
-            </a>
+            </Link>
 
-            <a href="https://domains.brandnameit.com/guides/migration-handbook" className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block text-left">
+            <Link to="/guides/migration-handbook" className="group bg-slate-card border border-slate-border rounded-2xl overflow-hidden hover:border-accent-orange/30 transition-all block text-left">
               <div className="h-48 bg-slate-dark flex items-center justify-center border-b border-slate-border group-hover:bg-slate-dark/50 transition-colors">
                 <Terminal className="w-16 h-16 text-accent-orange opacity-20 group-hover:opacity-40 transition-opacity" />
               </div>
@@ -266,13 +551,13 @@ export default function App() {
                   Read Article <ArrowUpRight className="w-4 h-4 text-accent-orange" />
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Pricing Comparison */}
-      <section className="py-24 px-4 bg-slate-card/30 border-t border-slate-border">
+      <section id="pricing" className="py-24 px-4 bg-slate-card/30 border-t border-slate-border">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-text-primary">Transparent Pricing</h2>
@@ -329,7 +614,7 @@ export default function App() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 px-4 bg-slate-dark">
+      <section id="faq" className="py-24 px-4 bg-slate-dark">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-3 mb-12">
             <div className="w-10 h-10 rounded-lg bg-accent-orange/20 flex items-center justify-center">
@@ -357,59 +642,31 @@ export default function App() {
                 a: "Absolutely. Our developer-first dashboard gives you full control over A, MX, CNAME, TXT, and SRV records with instant propagation."
               }
             ].map((faq, index) => (
-              <div key={index} className="bg-slate-card border border-slate-border rounded-xl overflow-hidden p-6">
-                <h3 className="text-lg font-bold text-text-primary mb-3 flex items-center justify-between">
-                  {faq.q}
-                  <ChevronDown className="w-5 h-5 text-accent-orange" />
-                </h3>
-                <p className="text-text-muted leading-relaxed">
-                  {faq.a}
-                </p>
-              </div>
+              <FAQItem key={index} q={faq.q} a={faq.a} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 bg-slate-dark border-t border-slate-border">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2">
-            <span className="text-accent-orange font-mono text-xl font-bold tracking-tighter">//</span>
-            <span className="font-bold tracking-tight text-text-primary uppercase">Brand Name It</span>
-          </div>
-          
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-medium">
-            <a 
-              href="https://domains.brandnameit.com/privacy" 
-              className="text-text-muted hover:text-accent-orange transition-colors"
-            >
-              Privacy
-            </a>
-            <a 
-              href="https://domains.brandnameit.com/terms" 
-              className="text-text-muted hover:text-accent-orange transition-colors"
-            >
-              Terms and Conditions
-            </a>
-            <a 
-              href="https://domains.brandnameit.com/abuse" 
-              className="text-text-muted hover:text-accent-orange transition-colors"
-            >
-              Abuse
-            </a>
-            <a 
-              href="https://domains.brandnameit.com/icann" 
-              className="text-text-muted hover:text-accent-orange transition-colors"
-            >
-              ICANN Rights & Responsibilities
-            </a>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 mt-8 text-center md:text-left">
-          <p className="text-text-muted text-xs">&copy; {new Date().getFullYear()} Brand Name It. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/guides" element={<GuideList />} />
+        <Route path="/guides/:slug" element={<GuideDetail />} />
+        {/* Marketing aliases to Landing page */}
+        <Route path="/pricing" element={<Landing />} />
+        <Route path="/transfer" element={<Landing />} />
+        <Route path="/register" element={<Landing />} />
+        <Route path="/login" element={<Landing />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
